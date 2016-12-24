@@ -10,11 +10,11 @@
     :down [x (dec y)]
     :left [(dec x) y]))
 
-(defn direction [n]
-  (get directions (mod n (count directions))))
+(defn direction [idx]
+  (get directions (mod idx (count directions))))
 
-(defn side [n length]
-  (repeat (inc length) (direction n)))
+(defn side [idx length]
+  (repeat (inc length) (direction idx)))
 
 (defn spiral [n]
   (->> (interleave (range) (range))
