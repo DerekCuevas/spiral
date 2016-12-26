@@ -1,7 +1,8 @@
 (ns spiral.core
   (:gen-class))
 
-(def directions [:up :right :down :left])
+(defn directions [clockwise]
+  (if clockwise [:up :right :down :left] [:up :left :down :right]))
 
 (defn move [[x y] direction]
   (case direction
@@ -10,15 +11,20 @@
     :down [x (dec y)]
     :left [(dec x) y]))
 
-(defn direction [idx]
-  (get directions (mod idx (count directions))))
+(defn direction [directions idx]
+  (directions (mod idx (count directions))))
 
-(defn side [idx length]
-  (repeat (inc length) (direction idx)))
+(defn side [directions idx length]
+  (repeat length (direction directions idx)))
 
-(defn spiral [n]
-  (->> (interleave (range) (range))
-       (map-indexed side)
-       (apply concat)
-       (take n)
-       (reductions move [0 0])))
+(defn spiral
+  ([]
+    (spiral true))
+  ([clockwise]
+    (->> (interleave (range) (range))
+         (map inc)
+         (map-indexed (partial side (directions clockwise)))
+         (flatten)
+         (reductions move [0 0])))
+  ([clockwise n]
+    (take n (spiral clockwise))))
